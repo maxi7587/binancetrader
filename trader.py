@@ -1,14 +1,31 @@
-import requests
-import json
+from dateutil.parser import parse
+import xlrd
 
-# format url?symbol&interval&startTime
-klines_url = 'https://api.binance.com/api/v1/klines'
+from resources.klines import KlinesService
+
+# get xls data
+data = xlrd.open_workbook('./xls/piratesignal_test_xls_output.xls')
+table = data.sheet_by_index(0)
+date_col = table.col_values(0)  # date column
+
+last_date = int(parse(date_col[0]).timestamp())
 
 klines_params = {
-    'symbol': 'LTCBTC',
+    'symbol': 'LTCBTC',  # get from table
     'interval': '1m',
-    'startTime': '1483243199000' # in ms since 1/1/1970
+    'startTime': last_date * 1000  # timestamp in ms
 }
 
-candlesticks = requests.get(klines_url, params = klines_params).json()
-print(candlesticks)
+klines = KlinesService.get_klines_history(klines_params)
+
+print(klines[0].open_time)
+
+# def check_order_result(order, interval):
+#     klines_params = {
+#         order['pair'],
+#         interval,
+#         order['timestamp']
+#     }
+#     klines_array = KlinesService.get_klines_history(klines_params)
+#     for kline in klines_array:
+#
