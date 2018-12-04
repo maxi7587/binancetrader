@@ -1,6 +1,5 @@
 config.py
 personal_config.py
-*.txt
 *.xls
 *.ods
 *.session
