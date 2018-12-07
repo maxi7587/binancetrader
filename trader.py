@@ -22,16 +22,16 @@ last_date = int(parse(date_col[1]).timestamp())
 # print(klines[-1])
 
 # print(klines[0].open_time)
+for x in range(1, 31):
+    print('------------------', x, '-----------------')
+    raw_first_order = table.row_values(x)
+    first_order = Order(
+        int(parse(raw_first_order[0]).timestamp()) * 1000,
+        raw_first_order[1],
+        raw_first_order[2:4],
+        raw_first_order[5:9],
+        raw_first_order[4]
+    )
+    first_order_result = OrdersService.get_order_result(first_order)
 
-raw_first_order = table.row_values(2)
-first_order = Order(
-    int(parse(raw_first_order[0]).timestamp()) * 1000,
-    raw_first_order[1],
-    raw_first_order[2:4],
-    raw_first_order[5:9],
-    raw_first_order[4]
-)
-
-first_order_result = OrdersService.get_order_result(first_order)
-
-print(first_order_result)
+    print(first_order_result)

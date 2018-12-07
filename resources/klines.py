@@ -44,9 +44,10 @@ class KlinesService:
         # just for dubugging
         # data = dump.dump_all(raw_klines)
         # print(data.decode('utf-8'))
+        # print(klines_params)
 
         raw_klines = raw_klines.json()
-        print(raw_klines[0])
+        # print(raw_klines[0])
 
         for kline in raw_klines:
             kline_object = Kline(

@@ -32,16 +32,25 @@ class OrdersService:
             for kline in klines_array:
                 if order.opened is None:
                     if kline.high >= order.open[0] and kline.low <= order.open[1]:
+                        print('OPENED')
                         order.opened = True
                     else:
-                        if kline.close_time >= int(round(time.time() * 1000)):
+                        # if it does not open after x time, discard order
+                        if kline.close_time >= order.timestamp + 10800000:
                             return 'Never opened'
+                        #  TODO: add parameter to allow opening after more time
+                        # if kline.close_time >= int(round(time.time() * 1000)):
+                        #     return 'Never opened'
                 if order.opened:
                     if kline.high >= order.take_profit[0] and kline.low <= order.stop_loss:
+                        print('TP & SL')
                         return 'TP an SL reached in the same kline'
                     if kline.high >= order.take_profit[0]:
+                        print('TP1')
                         return 'TP1'
                     if kline.low <= order.stop_loss:
+                        print(kline)
+                        print('SL', kline.low, 'is lower than', order.stop_loss)
                         return 'SL'
                     if kline.close_time >= int(round(time.time() * 1000)):
                         return 'Still open'
