@@ -22,6 +22,8 @@ last_date = int(parse(date_col[1]).timestamp())
 # print(klines[-1])
 
 # print(klines[0].open_time)
+
+# should take ell the rows in the file, but the actual data is corrupted
 for x in range(1, 31):
     print('------------------', x, '-----------------')
     raw_first_order = table.row_values(x)
