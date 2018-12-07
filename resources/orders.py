@@ -53,7 +53,7 @@ class OrdersService:
                         return 'SL'
                     if kline.close_time >= int(round(time.time() * 1000)):
                         print('Still open')
-                        return 'Still open'
+                        return ['Still open', kline.close]
             klines_params['startTime'] = klines_array[-1].open_time
             klines_array = KlinesService.get_klines_history(klines_params)
         return 'Never opened'

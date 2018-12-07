@@ -27,12 +27,13 @@ last_date = int(parse(date_col[1]).timestamp())
 trade_results = {
     'profit': 0.0,
     'loss': 0.0,
-    'trading': 0.000
+    'trading': 0.000,
+    'trading_closed': 0
 }
 start_amount = 0.01
 trade_amount = 0.001
 # should take ell the rows in the file, but the actual data is corrupted
-for x in range(1, 31):
+for x in range(1, 56):
     print('------------------', x, '-----------------')
     raw_first_order = table.row_values(x)
     first_order = Order(
@@ -47,9 +48,15 @@ for x in range(1, 31):
     print(first_order_result)
 
     # using "is" does not work
-    if first_order_result == 'Still open':
+    # IMPROVE THIS SECTION (STILL OPEN)
+    if first_order_result[0] == 'Still open' and  not first_order.pair.find('USDT'):
         print('STILL OPEN')
         trade_results['trading'] += trade_amount
+        trade_results['trading_closed'] += ((trade_amount / first_order.open[1]) * first_order_result[1]) - trade_amount * 0.001
+    if first_order_result[0] == 'Still open' and first_order.pair.find('USDT'):
+        print('STILL OPEN')
+        trade_results['trading'] += trade_amount
+        trade_results['trading_closed'] += ((trade_amount * first_order.open[1]) / first_order_result[1]) - trade_amount * 0.001
     if first_order_result is 'SL' and not first_order.pair.find('USDT'):
         trade_results['loss'] += ((trade_amount / first_order.open[1]) * first_order.take_profit[0]) + trade_amount * 0.001
     if first_order_result is 'SL' and first_order.pair.find('USDT'):
@@ -59,11 +66,14 @@ for x in range(1, 31):
     if first_order_result is 'TP1' and first_order.pair.find('USDT'):
         trade_results['profit'] += ((trade_amount * first_order.open[1]) / first_order.take_profit[0]) - trade_amount * 0.001
 
-close_positions_cost = trade_results['trading'] - trade_results['trading'] * 0.001
+close_positions_cost = trade_results['trading'] * 0.001
 
 print('Profit:', trade_results['profit'])
 print('Loss:', trade_results['loss'])
 print('Trading:', trade_results['trading'])
 print('In wallet;', start_amount + trade_results['profit'] - trade_results['loss'] - trade_results['trading'] - close_positions_cost)
+print('Closing positions cost:', close_positions_cost)
 print('Total profit (closing positions at entry value)', trade_results['profit'] - trade_results['loss'] - close_positions_cost)
 print('Total capital', start_amount + trade_results['profit'] - trade_results['loss'] - close_positions_cost)
+
+print('Total capital closing trades now at real value:', start_amount + trade_results['profit'] + trade_results['trading_closed'] - trade_results['loss'])
