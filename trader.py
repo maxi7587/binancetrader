@@ -23,6 +23,14 @@ last_date = int(parse(date_col[1]).timestamp())
 
 # print(klines[0].open_time)
 
+
+trade_results = {
+    'profit': 0.0,
+    'loss': 0.0,
+    'trading': 0.000
+}
+start_amount = 0.01
+trade_amount = 0.001
 # should take ell the rows in the file, but the actual data is corrupted
 for x in range(1, 31):
     print('------------------', x, '-----------------')
@@ -37,3 +45,25 @@ for x in range(1, 31):
     first_order_result = OrdersService.get_order_result(first_order)
 
     print(first_order_result)
+
+    # using "is" does not work
+    if first_order_result == 'Still open':
+        print('STILL OPEN')
+        trade_results['trading'] += trade_amount
+    if first_order_result is 'SL' and not first_order.pair.find('USDT'):
+        trade_results['loss'] += ((trade_amount / first_order.open[1]) * first_order.take_profit[0]) + trade_amount * 0.001
+    if first_order_result is 'SL' and first_order.pair.find('USDT'):
+        trade_results['loss'] += ((trade_amount * first_order.open[1]) / first_order.take_profit[0]) + trade_amount * 0.001
+    if first_order_result is 'TP1' and not first_order.pair.find('USDT'):
+        trade_results['profit'] += ((trade_amount / first_order.open[1]) * first_order.take_profit[0]) - trade_amount * 0.001
+    if first_order_result is 'TP1' and first_order.pair.find('USDT'):
+        trade_results['profit'] += ((trade_amount * first_order.open[1]) / first_order.take_profit[0]) - trade_amount * 0.001
+
+close_positions_cost = trade_results['trading'] - trade_results['trading'] * 0.001
+
+print('Profit:', trade_results['profit'])
+print('Loss:', trade_results['loss'])
+print('Trading:', trade_results['trading'])
+print('In wallet;', start_amount + trade_results['profit'] - trade_results['loss'] - trade_results['trading'] - close_positions_cost)
+print('Total profit (closing positions at entry value)', trade_results['profit'] - trade_results['loss'] - close_positions_cost)
+print('Total capital', start_amount + trade_results['profit'] - trade_results['loss'] - close_positions_cost)

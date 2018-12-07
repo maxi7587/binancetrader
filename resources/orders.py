@@ -49,10 +49,10 @@ class OrdersService:
                         print('TP1')
                         return 'TP1'
                     if kline.low <= order.stop_loss:
-                        print(kline)
                         print('SL', kline.low, 'is lower than', order.stop_loss)
                         return 'SL'
                     if kline.close_time >= int(round(time.time() * 1000)):
+                        print('Still open')
                         return 'Still open'
             klines_params['startTime'] = klines_array[-1].open_time
             klines_array = KlinesService.get_klines_history(klines_params)
