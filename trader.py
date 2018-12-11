@@ -32,6 +32,7 @@ trade_results = {
 }
 start_amount = 0.01
 trade_amount = 0.001
+months_working = 36
 # should take ell the rows in the file, but the actual data is corrupted
 for x in range(1, 56):
     print('------------------', x, '-----------------')
@@ -67,7 +68,7 @@ for x in range(1, 56):
     if first_order_result is 'TP1' and first_order.pair.find('USDT'):
         trade_results['profit'] += ((trade_amount * first_order.open[1]) / first_order.take_profit[0]) - trade_amount * 0.001
 
-close_positions_cost = trade_results['trading'] * 0.001
+close_positions_cost = trade_results['trading'] * 0.001  # its not trade amount, it's binance's 0.1% comission
 
 print('Profit:', trade_results['profit'])
 print('Loss:', trade_results['loss'])
@@ -77,14 +78,15 @@ print('Closing positions cost:', close_positions_cost)
 print('Total profit (closing positions at entry value)', trade_results['profit'] - trade_results['loss'] - close_positions_cost)
 print('Total capital', start_amount + trade_results['profit'] - trade_results['loss'] - close_positions_cost)
 
-sell_all_total = start_amount + trade_results['profit'] + trade_results['trading_closed'] - trade_results['loss']
+sell_all_total = start_amount - trade_results['trading'] + trade_results['profit'] + trade_results['trading_closed'] - trade_results['loss']
 sell_all_profit = sell_all_total - start_amount
-print('Total capital closing trades now at real value:', start_amount + trade_results['profit'] + trade_results['trading_closed'] - trade_results['loss'])
+print('Total capital closing trades now at real value:', start_amount - trade_results['trading'] + trade_results['profit'] + trade_results['trading_closed'] - trade_results['loss'])
+print('Total profit percent:', sell_all_profit)
 
 daily_profit_percent = ((((sell_all_profit/7)/2)*100)/start_amount)
 monthly_profit_percent = ((((sell_all_profit/7)/2)*100)/start_amount)*30
 print('Daily profit percent:', ((((sell_all_profit/7)/2)*100)/start_amount))
 print('Monthly profit percent:', ((((sell_all_profit/7)/2)*100)/start_amount)*30)
-print('Year profit percent:', ((((sell_all_profit/7)/2)*100)/start_amount)*30*12)
+print('Year profit percent:', ((((sell_all_profit/7)/2)*100)/start_amount)*30*months_working)
 
-print('Yearly total with monthly compound interest:', start_amount*((1+(monthly_profit_percent/100))**12))
+print('Yearly total with monthly compound interest:', start_amount*((1+(monthly_profit_percent/100))**months_working))
