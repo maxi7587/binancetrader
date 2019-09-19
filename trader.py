@@ -34,7 +34,7 @@ start_amount = 0.01
 trade_amount = 0.001
 months_working = 36
 # should take ell the rows in the file, but the actual data is corrupted
-for x in range(1, 56):
+for x in range(1, 100):
     print('------------------', x, '-----------------')
     raw_first_order = table.row_values(x)
     first_order = Order(

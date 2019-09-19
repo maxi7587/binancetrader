@@ -47,7 +47,8 @@ class KlinesService:
         # print(klines_params)
 
         raw_klines = raw_klines.json()
-        # print(raw_klines[0])
+        # print(klines_params)
+        # print(raw_klines)
 
         for kline in raw_klines:
             kline_object = Kline(
